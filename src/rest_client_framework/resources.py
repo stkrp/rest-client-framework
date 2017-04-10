@@ -1,14 +1,14 @@
-from typing import Union, Any
+from typing import Union
 from urllib.parse import urljoin
 
-from .executors import BaseExecutor
+from .executors import BaseExecutor, ExecutorRequired
 from .recordsets import BaseRecordSet
 
 
-class BaseResource(object):
+class BaseResource(ExecutorRequired):
     def __init__(self, path: str, *, executor: BaseExecutor) -> None:
+        super().__init__(executor=executor)
         self.path = path
-        self.executor = executor
 
     def _build_subpath(self, path_postfix: str) -> str:
         return urljoin(self.path, path_postfix)
@@ -50,19 +50,19 @@ class BaseResourceDescriptor(object):
             self.resource_class = resource_class
 
     def __get__(
-        self, instance: Any, owner: type,
+        self, instance: ExecutorRequired, owner: type,
     ) -> Union['BaseResourceDescriptor', resource_class]:
         if instance is None:
             return self
         # TODO: Можно сделать кэширование в `instance` для оптимизации
         return self._build_resource(instance)
 
-    def _build_resource(self, instance: Any) -> resource_class:
+    def _build_resource(self, instance: ExecutorRequired) -> resource_class:
         return self.resource_class(
             self._build_path(instance), executor=instance.executor,
         )
 
-    def _build_path(self, instance: Any) -> str:
+    def _build_path(self, instance: ExecutorRequired) -> str:
         return self.path_template.format(instance=instance)
 
 
@@ -77,7 +77,7 @@ class ListResourceDescriptor(BaseResourceDescriptor):
         self.model_class = model_class
         self.record_set_class = record_set_class
 
-    def _build_resource(self, instance: Any) -> resource_class:
+    def _build_resource(self, instance: ExecutorRequired) -> resource_class:
         return self.resource_class(
             self._build_path(instance),
             self.model_class,

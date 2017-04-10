@@ -1,6 +1,5 @@
-from .executors import BaseExecutor
+from .executors import ExecutorRequired
 
 
-class BaseRestClient(object):
-    def __init__(self, *, executor: BaseExecutor) -> None:
-        self.executor = executor
+class BaseRestClient(ExecutorRequired):
+    pass

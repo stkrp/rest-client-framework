@@ -36,3 +36,8 @@ class BaseExecutor(object):
 
     def _parse_response_data(self, response: Response) -> Any:
         return self.parser(response)
+
+
+class ExecutorRequired(object):
+    def __init__(self, *, executor: BaseExecutor):
+        self.executor = executor

@@ -3,17 +3,17 @@ from typing import Any, Iterator, Union, Dict, Generator
 
 from requests import Request
 
-from .executors import BaseExecutor
+from .executors import BaseExecutor, ExecutorRequired
 from .models import BaseModel
 
 
-class BaseRecordSet(object):
+class BaseRecordSet(ExecutorRequired):
     def __init__(
         self, path: str, model_class: type, *, executor: BaseExecutor
     ) -> None:
+        super().__init__(executor=executor)
         self.path = path
         self.model_class = model_class
-        self.executor = executor
 
         # По умолчанию все запросы на получение
         self._request = Request(method='get', url=self.path)
