@@ -1,9 +1,8 @@
 from typing import Union, Any
 from urllib.parse import urljoin
 
-from .executor import BaseExecutor
-from .recordset import BaseRecordSet
-from .model import BaseModel
+from .executors import BaseExecutor
+from .recordsets import BaseRecordSet
 
 
 class BaseResource(object):
@@ -33,14 +32,11 @@ class ListResource(BaseResource):
             self.path, self.model_class, executor=self.executor,
         )
 
-    # def create(self, **kwargs) -> BaseModel:
-    #     return self.model_class(executor=self.executor, **kwargs).save()
-
 
 class BaseResourceDescriptor(object):
     """ 
     Фабрика ресурсов (`BaseResource`) для каждого экземпляра 
-    произвольного класса, который содержит эту фабрику
+    произвольного класса, который содержит эту фабрику и `executor`
     """
 
     resource_class = BaseResource

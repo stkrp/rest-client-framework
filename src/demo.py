@@ -1,12 +1,13 @@
 from requests import Request, Response
 
-from rest_client_framework.client import BaseRestClient
-from rest_client_framework.resource import (
+from rest_client_framework.clients import BaseRestClient
+from rest_client_framework.resources import (
     ListResourceDescriptor, BaseResourceDescriptor, BaseResource,
 )
-from rest_client_framework.model import BaseModel
-from rest_client_framework.executor import BaseExecutor
-from rest_client_framework.recordset import BaseRecordSet
+from rest_client_framework.models import BaseModel
+from rest_client_framework.executors import BaseExecutor
+from rest_client_framework.recordsets import BaseRecordSet
+from rest_client_framework.parsers import JsonParser, BaseParser
 
 
 class Comment(BaseModel):
@@ -15,8 +16,11 @@ class Comment(BaseModel):
 
 class Post(BaseModel):
     comments = ListResourceDescriptor(
-        '/posts/{instance.params[id]}/comments/', Comment,
+        '/posts/{instance.id}/comments/', Comment,
     )
+
+    def __str__(self):
+        return f'#{self.id} {self.title}'
 
 
 class AuthResource(BaseResource):
@@ -32,8 +36,8 @@ class AuthResource(BaseResource):
 
 
 class DemoExecutor(BaseExecutor):
-    def __init__(self, url: str, custom_header: str):
-        super().__init__(url)
+    def __init__(self, url: str, custom_header: str, *, parser: BaseParser):
+        super().__init__(url, parser=parser)
         self.custom_header = custom_header
         self.auth_token = None
 
@@ -55,11 +59,13 @@ if __name__ == '__main__':
     api_client = DemoRestClient(
         executor=DemoExecutor(
             'https://jsonplaceholder.typicode.com/', 'MyCustomHeaderValue',
+            parser=JsonParser(),
         )
     )
-    posts = api_client.posts.select().exec()
-    print(posts, sep='\n')
+    posts = api_client.posts.select()
+    print(*posts, sep='\n')
     print('-' * 80)
+    print(*posts.filter(userId=5), sep='\n')
     print(api_client.auth.login('name', 'pass').json())
     # print(posts[0].params['id'])
-    print(posts[0].comments.select().exec(), sep='\n')
+    print(*posts[0].comments.select(), sep='\n')

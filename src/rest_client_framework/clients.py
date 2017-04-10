@@ -1,4 +1,4 @@
-from .executor import BaseExecutor
+from .executors import BaseExecutor
 
 
 class BaseRestClient(object):
