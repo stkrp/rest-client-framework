@@ -12,5 +12,5 @@ class BaseModel(ExecutorRequired):
             setattr(self, param_name, param_value)
 
     def save(self) -> 'BaseModel':
-        # TODO: Определить сохранение через `executor`
+        # TODO: Определить сохранение через `resource`
         return self

@@ -8,6 +8,7 @@ from .parsers import BaseParser
 
 
 class BaseExecutor(object):
+    """ Исполнитель запросов """
     def __init__(self, url: str, *, parser: BaseParser) -> None:
         self.url = url
         self.parser = parser
@@ -23,9 +24,7 @@ class BaseExecutor(object):
         # код ниже, а имеющийся код удалить:
         # response = self.session.send(self.session.prepare_request(_request))
         response = self.session.send(request.prepare())
-        # FIXME: При `pickling` потеряется `parsed_data`
-        # (можно отнаследовать `requests.Response` и расширить `__attrs__`)
-        response.parsed_data = self._parse_response_data(response)
+        self._setup_response(response)
         return response
 
     def _setup_request(self, request: Request) -> None:
@@ -33,6 +32,11 @@ class BaseExecutor(object):
 
     def _build_suburl(self, path: str) -> str:
         return urljoin(self.url, path)
+
+    def _setup_response(self, response: Response) -> None:
+        # FIXME: При `pickling` потеряется `parsed_data`
+        # (можно отнаследовать `requests.Response` и расширить `__attrs__`)
+        response.parsed_data = self._parse_response_data(response)
 
     def _parse_response_data(self, response: Response) -> Any:
         return self.parser(response)

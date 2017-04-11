@@ -6,6 +6,9 @@ from .recordsets import BaseRecordSet
 
 
 class BaseResource(ExecutorRequired):
+    """ 
+    Описывает End-point API и методы работы с ним.
+    """
     def __init__(self, path: str, *, executor: BaseExecutor) -> None:
         super().__init__(executor=executor)
         self.path = path

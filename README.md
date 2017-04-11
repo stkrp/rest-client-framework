@@ -1,4 +1,4 @@
-# Задача
+## Задача
 
 Реализовать на python клиентскую библиотеку (модуль) для работы с REST API.
 В качестве API можно взять любое REST API, например, https://jsonplaceholder.typicode.com
@@ -43,3 +43,15 @@ blog_post_items = api.PostModel.limit(10).page(2).items() #Получение к
 1. Добавить проверки и собственные исключения
 2. Покрыть код тестами
 3. ...
+
+## Установка
+
+### Требования
+* Python 3.6
+* `pip3 install -r requirements.txt`
+
+
+### Запуск
+```
+python3 demo.py
+```
